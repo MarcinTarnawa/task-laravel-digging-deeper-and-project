@@ -1,76 +1,95 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edytuj Klienta - Fakturomat</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-light">
+<x-layout>
+    <div class="w-full max-w-2xl mx-auto px-4 py-10">
+        
+        <!-- Breadcrumb (Nawigacja okruszkowa) -->
+        <nav class="flex mb-6 text-sm font-medium ml-1" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="text-gray-400 hover:text-blue-600 transition-colors flex items-center">
+                        <i class="fas fa-home mr-2 text-xs"></i> Start
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-300 text-[10px] mx-2"></i>
+                        <a href="/customer" class="text-gray-400 hover:text-blue-600 transition-colors">Klienci</a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-300 text-[10px] mx-2"></i>
+                        <span class="text-blue-600 font-bold">Edycja</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            
-            <nav aria-label="breadcrumb" class="mb-4">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Start</a></li>
-                    <li class="breadcrumb-item"><a href="/customer" class="text-decoration-none">Klienci</a></li>
-                    <li class="breadcrumb-item active">Edycja</li>
-                </ol>
-            </nav>
-
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-dark text-white py-3">
-                    <h5 class="mb-0"><i class="fas fa-user-edit me-2"></i>Edytuj dane klienta</h5>
+        <!-- Karta główna -->
+        <div class="bg-white rounded-[24px] shadow-2xl overflow-hidden border border-gray-100">
+            <!-- Header -->
+            <div class="bg-gray-900 px-8 py-6 flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-400">
+                    <i class="fas fa-user-edit"></i>
                 </div>
-                <div class="card-body p-4">
-                    <form action="/customer/{{ $customer->id }}" method="post">
-                        @csrf
-                        @method('PUT')
+                <h2 class="text-xl font-bold text-white tracking-tight">Edytuj dane klienta</h2>
+            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold small">Imię</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" 
-                                   value="{{ old('name', $customer->name) }}" required>
-                            @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            <!-- Formularz -->
+            <div class="p-8 md:p-10">
+                <form action="/customer/{{ $customer->id }}" method="post" class="space-y-6">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Imię -->
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest ml-1">Imię</label>
+                            <input type="text" name="name" value="{{ old('name', $customer->name) }}" required
+                                class="block w-full px-4 py-3 bg-gray-50 border @error('name') border-red-500 @else border-gray-200 @enderror rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-gray-700">
+                            @error('name') <p class="text-[10px] text-red-500 font-bold mt-1 ml-1 uppercase">{{ $message }}</p> @enderror
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold small">Nazwisko</label>
-                            <input type="text" name="lastName" class="form-control @error('lastName') is-invalid @enderror" 
-                                   value="{{ old('lastName', $customer->lastName) }}" required>
-                            @error('lastName') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <!-- Nazwisko -->
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest ml-1">Nazwisko</label>
+                            <input type="text" name="lastName" value="{{ old('lastName', $customer->lastName) }}" required
+                                class="block w-full px-4 py-3 bg-gray-50 border @error('lastName') border-red-500 @else border-gray-200 @enderror rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-gray-700">
+                            @error('lastName') <p class="text-[10px] text-red-500 font-bold mt-1 ml-1 uppercase">{{ $message }}</p> @enderror
                         </div>
+                    </div>
 
-                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Email</label>
-                            <input type="text" name="email" class="form-control @error('email') is-invalid @enderror" 
-                                   value="{{ old('email', $customer->email) }}" required>
-                            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    <!-- Email -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest ml-1">Email kontaktowy</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                                <i class="fas fa-envelope text-xs"></i>
+                            </span>
+                            <input type="email" name="email" value="{{ old('email', $customer->email) }}" required
+                                class="block w-full pl-10 pr-4 py-3 bg-gray-50 border @error('email') border-red-500 @else border-gray-200 @enderror rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-gray-700">
                         </div>
+                        @error('email') <p class="text-[10px] text-red-500 font-bold mt-1 ml-1 uppercase">{{ $message }}</p> @enderror
+                    </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-bold small">Pełny Adres</label>
-                            <textarea name="address" class="form-control @error('address') is-invalid @enderror" 
-                                      rows="3" required>{{ old('address', $customer->address) }}</textarea>
-                            @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
+                    <!-- Adres -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest ml-1">Pełny Adres</label>
+                        <textarea name="address" rows="3" required
+                            class="block w-full px-4 py-3 bg-gray-50 border @error('address') border-red-500 @else border-gray-200 @enderror rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-gray-700 resize-none">{{ old('address', $customer->address) }}</textarea>
+                        @error('address') <p class="text-[10px] text-red-500 font-bold mt-1 ml-1 uppercase">{{ $message }}</p> @enderror
+                    </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary px-4 shadow-sm">
-                                <i class="fas fa-save me-1"></i> Zapisz zmiany
-                            </button>
-                            <a href="/customer" class="btn btn-outline-secondary px-4">Anuluj</a>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Stopka / Przyciski -->
+                    <div class="flex items-center gap-4 pt-4">
+                        <button type="submit" class="flex-1 md:flex-none px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fas fa-save text-sm"></i> Zapisz zmiany
+                        </button>
+                        <a href="/customer" class="flex-1 md:flex-none px-8 py-4 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all text-center">
+                            Anuluj
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</x-layout>

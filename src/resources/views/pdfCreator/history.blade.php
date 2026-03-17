@@ -1,141 +1,98 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Historia Wersji - {{ config('app.name', 'Fakturomat') }}</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        .uppercase {
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .card {
-            border-radius: 15px;
-            overflow: hidden;
-        }
-
-        /* Styl dla osi czasu */
-        .timeline-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .version-card {
-            transition: transform 0.2s ease-in-out;
-            border-left: 5px solid #6c757d; /* Domyślny kolor dla archiwalnych */
-        }
-
-        .version-card:hover {
-            transform: translateX(5px);
-        }
-
-        .version-card.active-version {
-            border-left: 5px solid #198754; /* Zielony dla aktywnej */
-            background-color: #f8fff9;
-        }
-
-        .badge-version {
-            font-size: 0.9rem;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-    </style>
-</head>
-
-<body class="bg-light">
-    <div class="container py-5">
-
-        {{-- Powiadomienia --}}
+<x-layout>
+    <div class="w-full max-w-5xl mx-auto px-4 py-8 space-y-6">
+        
+        <!-- Powiadomienia -->
         @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
-            <i class="fas fa-check-circle me-2"></i><strong>Sukces!</strong> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-2xl shadow-sm animate-fade-in">
+            <i class="fas fa-check-circle text-xl"></i>
+            <span class="font-semibold">{{ session('success') }}</span>
         </div>
         @endif
 
-        {{-- Nagłówek strony historii --}}
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="text-dark mb-0">
-                <i class="fas fa-history me-2 text-primary"></i>Historia zmian
-            </h3>
-            <a href="/pdf" class="btn btn-outline-dark shadow-sm bg-white">
-                <i class="fas fa-arrow-left me-1"></i> Powrót do panelu
+        <!-- Nagłówek -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-2">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl shadow-sm border border-blue-100/50">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Historia zmian</h2>
+                    <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest">Wykaz wszystkich rewizji faktury</p>
+                </div>
+            </div>
+            <a href="/pdf" class="px-6 py-3 bg-white border border-gray-200 text-gray-600 text-sm font-bold rounded-xl hover:bg-gray-50 hover:text-blue-600 transition-all shadow-sm flex items-center gap-2">
+                <i class="fas fa-arrow-left text-[10px]"></i> Powrót do panelu
             </a>
         </div>
 
-        <div class="timeline-container">
+        <!-- Lista rewizji (Timeline) -->
+        <div class="space-y-4">
             @foreach($history as $rev)
-            <div class="card shadow-sm border-0 mb-3 version-card {{ $rev->is_active ? 'active-version' : '' }}">
-                <div class="card-body p-4">
-                    <div class="row align-items-center">
-                        
-                        {{-- Wersja --}}
-                        <div class="col-md-2 text-center border-end">
-                            <div class="badge-version {{ $rev->is_active ? 'bg-success text-white' : 'bg-light text-muted border' }} mx-auto mb-2">
-                                <span class="fw-bold">v{{ $rev->version }}</span>
-                            </div>
-                            @if($rev->is_active)
-                                <span class="badge bg-success uppercase small">Aktywna</span>
-                            @else
-                                <span class="badge bg-secondary uppercase small">Archiwum</span>
+            <div class="relative group bg-white p-6 rounded-[24px] shadow-sm hover:shadow-md border border-gray-100 transition-all duration-300 hover:translate-x-1 
+                {{ $rev->is_active ? 'border-l-8 border-l-green-500 bg-green-50/20' : 'border-l-8 border-l-gray-300' }}">
+                
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    
+                    <!-- Lewa sekcja: Numer wersji i status -->
+                    <div class="flex flex-col items-center justify-center min-w-[100px] border-r border-gray-100 pr-6 hidden md:flex">
+                        <div class="w-14 h-14 rounded-full flex items-center justify-center text-lg font-black mb-2
+                            {{ $rev->is_active ? 'bg-green-100 text-green-700 shadow-inner' : 'bg-gray-50 text-gray-400 border border-gray-200' }}">
+                            v{{ $rev->version }}
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-tighter px-2 py-0.5 rounded {{ $rev->is_active ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500' }}">
+                            {{ $rev->is_active ? 'Aktywna' : 'Archiwalna' }}
+                        </span>
+                    </div>
+
+                    <!-- Środkowa sekcja: Szczegóły -->
+                    <div class="flex-1 space-y-1 text-center md:text-left">
+                        <div class="text-[11px] font-bold text-blue-500 uppercase tracking-widest flex items-center justify-center md:justify-start gap-2">
+                            <i class="fas fa-calendar-alt"></i>
+                            Edytowano: {{ $rev->updated_at->format('d.m.Y H:i') }}
+                        </div>
+                        <h4 class="text-xl font-extrabold text-gray-900 tracking-tight">{{ $rev->product_name }}</h4>
+                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-x-4 text-sm font-medium">
+                            <span class="text-gray-500 flex items-center gap-1">
+                                <i class="fas fa-user text-[10px] opacity-40"></i> {{ $rev->customer->name ?? 'Brak danych' }}
+                            </span>
+                            <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-lg">
+                                {{ number_format($rev->price, 2, ',', ' ') }} PLN
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Prawa sekcja: Akcje -->
+                    <div class="flex items-center gap-2">
+                        <div class="inline-flex bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-sm group-hover:bg-white transition-all">
+                            
+                            <!-- Podgląd -->
+                            <a href="/download-pdf/{{ $rev->id }}?action=stream" target="_blank" title="Podgląd"
+                               class="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                <i class="fas fa-eye text-sm"></i>
+                            </a>
+
+                            <!-- Pobierz PDF -->
+                            <a href="/download-pdf/{{ $rev->id }}?action=download" title="Pobierz"
+                               class="p-3 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">
+                                <i class="fas fa-download text-sm"></i>
+                            </a>
+
+                            <!-- Przywróć wersję -->
+                            @if(!$rev->is_active)
+                            <form action="{{ route('pdf.restore', $rev->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" onclick="return confirm('Czy chcesz przywrócić tę wersję?')" title="Przywróć"
+                                    class="p-3 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all cursor-pointer">
+                                    <i class="fas fa-undo text-sm"></i>
+                                </button>
+                            </form>
                             @endif
                         </div>
-
-                        {{-- Szczegóły --}}
-                        <div class="col-md-7 ps-4">
-                            <div class="text-muted small uppercase fw-bold mb-1" style="font-size: 0.7rem;">
-                                <i class="fas fa-calendar-alt me-1"></i> Edytowano: {{ $rev->updated_at->format('d.m.Y H:i') }}
-                            </div>
-                            <h5 class="mb-1 text-dark">{{ $rev->product_name }}</h5>
-                            <p class="mb-0 text-muted">
-                                <i class="fas fa-user me-1"></i> {{ $rev->customer->name ?? 'Brak danych' }} | 
-                                <span class="fw-bold text-primary">{{ number_format($rev->price, 2, ',', ' ') }} PLN</span>
-                            </p>
-                        </div>
-
-                        {{-- Akcje --}}
-                        <div class="col-md-3 text-end">
-                            <div class="btn-group shadow-sm">
-                                <a href="/download-pdf/{{ $rev->id }}?action=stream" 
-                                   class="btn btn-sm btn-outline-info" target="_blank" title="Podgląd">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="/download-pdf/{{ $rev->id }}?action=download" 
-                                   class="btn btn-sm btn-outline-primary" title="Pobierz">
-                                    <i class="fas fa-download"></i>
-                                </a>
-                                
-                                @if(!$rev->is_active)
-                                <form action="{{ route('pdf.restore', $rev->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-warning" 
-                                            onclick="return confirm('Czy chcesz przywrócić tę wersję jako aktualną?')" 
-                                            title="Przywróć tę wersję">
-                                        <i class="fas fa-undo"></i>
-                                    </button>
-                                </form>
-                                @endif
-                            </div>
-                        </div>
-
                     </div>
+
                 </div>
             </div>
             @endforeach
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+</x-layout>

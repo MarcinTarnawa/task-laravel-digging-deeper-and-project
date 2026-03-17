@@ -1,44 +1,73 @@
-<div style="max-width: 500px; margin: 40px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee;">
-    
-    <h2 style="margin-top: 0; color: #333; font-size: 22px; margin-bottom: 20px;">Ustawienia Profilu</h2>
-
-    <form action="{{ route('user.update', auth()->user()->id) }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PATCH')
-
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #555;">Nazwa użytkownika</label>
-            <input type="text" name="name" value="{{ auth()->user()->name }}" 
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #555;">Kolor Twojej marki</label>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <input type="color" name="brand_color" value="{{ auth()->user()->brand_color ?? '#0d6efd' }}" 
-                       style="border: none; width: 50px; height: 50px; cursor: pointer; background: none; padding: 0;">
-                <span style="font-size: 13px; color: #888;">Ten kolor pojawi się na Twoich fakturach</span>
+<x-layout>
+    <!-- Kontener karty -->
+    <div class="relative z-10 mx-auto w-full max-w-[500px] bg-white p-10 md:p-12 rounded-[24px] shadow-2xl transition-all duration-300">
+        
+        <div class="flex items-center gap-4 mb-8">
+            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl shadow-sm border border-blue-100/50">
+                <i class="fas fa-user-cog"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Ustawienia Profilu</h2>
+                <p class="text-xs text-gray-400 font-medium uppercase tracking-wider">Personalizacja Twoich faktur</p>
             </div>
         </div>
 
-        <div style="margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px dashed #ccc;">
-            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: #555;">Logo firmy (PNG, JPG)</label>
-            
-            @if(auth()->user()->logo_path)
-                <div style="margin-bottom: 15px; text-align: center; background: white; padding: 10px; border-radius: 6px; border: 1px solid #eee;">
-                    <p style="font-size: 12px; color: #999; margin-bottom: 8px;">Aktualne logo:</p>
-                    <img src="{{ asset('storage/' . auth()->user()->logo_path) }}" 
-                         style="max-width: 100%; height: 60px; object-fit: contain; display: block; margin: 0 auto;">
-                </div>
-            @endif
-            
-            <input type="file" name="logo" style="font-size: 13px; color: #666;">
-        </div>
+        <form action="{{ route('user.update', auth()->user()->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            @method('PATCH')
 
-        <button type="submit" 
-                style="width: 100%; background-color: #0d6efd; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; transition: background 0.3s;">
-            Zapisz zmiany
-        </button>
-        <a href="/pdf" class="btn btn-link mt-3 text-decoration-none text-muted">Powrót</a>
-    </form>
-</div>
+            <!-- Nazwa użytkownika -->
+            <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest ml-1">Nazwa użytkownika</label>
+                <input type="text" name="name" value="{{ auth()->user()->name }}" 
+                    class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-gray-700 font-medium"
+                    placeholder="Twoje imię lub nazwa firmy">
+            </div>
+
+            <!-- Kolor marki -->
+            <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest ml-1">Kolor Twojej marki</label>
+                <div class="flex items-center gap-4 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+                    <input type="color" name="brand_color" value="{{ auth()->user()->brand_color ?? '#0d6efd' }}" 
+                        class="w-12 h-12 border-0 bg-transparent cursor-pointer rounded-lg p-0 [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-lg [&::-webkit-color-swatch]:border-none">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 italic">Akcent kolorystyczny</span>
+                        <span class="text-[10px] text-gray-400 uppercase tracking-tighter">Pojawi się na wydrukach PDF</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logo Firmy -->
+            <div class="space-y-3 p-5 bg-blue-50/30 border-2 border-dashed border-blue-100 rounded-2xl">
+                <label class="block text-[11px] font-bold text-blue-600 uppercase tracking-widest ml-1">Logo firmy (PNG, JPG)</label>
+                
+                @if(auth()->user()->logo_path)
+                    <div class="bg-white p-3 rounded-xl border border-blue-100 shadow-sm">
+                        <p class="text-[10px] text-gray-400 mb-2 text-center uppercase font-bold tracking-tighter">Aktualne logo:</p>
+                        <img src="{{ asset('storage/' . auth()->user()->logo_path) }}" 
+                             class="max-h-16 mx-auto object-contain">
+                    </div>
+                @endif
+                
+                <input type="file" name="logo" 
+                    class="block w-full text-xs text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-[11px] file:font-bold
+                    file:bg-blue-600 file:text-white
+                    hover:file:bg-blue-700 transition-all cursor-pointer">
+            </div>
+
+            <!-- Przyciski -->
+            <div class="pt-4 flex flex-col gap-3">
+                <button type="submit" 
+                    class="w-full py-4 bg-blue-600 text-white text-sm font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-600/20 active:scale-95 transition-all cursor-pointer">
+                    Zapisz zmiany
+                </button>
+                <a href="/pdf" class="text-center text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest py-2">
+                    <i class="fas fa-arrow-left mr-1"></i> Powrót
+                </a>
+            </div>
+        </form>
+    </div>
+</x-layout>

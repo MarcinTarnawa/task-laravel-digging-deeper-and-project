@@ -1,49 +1,57 @@
-<!DOCTYPE html>
-<html lang="pl" class="h-full bg-gray-50">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logowanie</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="h-full flex items-center justify-center p-6">
+<x-layout>
+    <div class="relative z-10 mx-auto w-full max-w-[500px] bg-white p-12 rounded-[24px] shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-transform duration-300">
+        
+        <div class="flex justify-center mb-6">
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl shadow-inner border border-blue-100/50">
+                <i class="fas fa-lock"></i>
+            </div>
+        </div>
 
-    <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Zaloguj się</h2>
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-2 text-center tracking-tight">Zaloguj się</h2>
+        <p class="text-sm text-gray-500 text-center mb-10 font-medium">Witaj w systemie Fakturomat</p>
 
-        <form action="/login" method="post" class="space-y-4">
+        <form action="/login" method="post" class="space-y-6 text-left">
             @csrf
 
+            <!-- Email -->
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <label for="email" class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4 px-1">Email</label>
                 <input type="email" name="email" id="email" 
                     value="{{ old('email') }}" 
-                    class="mt-1 block w-full px-3 py-2 bg-white border @error('email') border-red-500 @else border-gray-300 @enderror rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
-                    required>
+                    placeholder="twoj@email.pl"
+                    class="block w-full px-5 py-4 bg-gray-50 border @error('email') border-red-500 @else border-gray-200 @enderror rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-transparent transition-all outline-none placeholder:text-gray-300" 
+                    required
+                    autofocus>
                 @error('email')
-                    <p class="mt-1 text-xs text-red-500 italic">{{ $message }}</p>
+                    <p class="mt-2 text-xs text-red-500 font-semibold flex items-center gap-1 italic">
+                        <i class="fas fa-exclamation-circle text-[10px]"></i> {{ $message }}
+                    </p>
                 @enderror
             </div>
 
+            <!-- Hasło -->
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Hasło</label>
+                <label for="password" class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-2 mb-4 px-1">Hasło</label>
                 <input type="password" name="password" id="password" 
-                    class="mt-1 block w-full px-3 py-2 bg-white border @error('password') border-red-500 @else border-gray-300 @enderror rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                    placeholder="••••••••"
+                    class="block w-full px-5 py-4 bg-gray-50 border @error('password') border-red-500 @else border-gray-200 @enderror rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-transparent transition-all outline-none placeholder:text-gray-300" 
                     required>
                 @error('password')
-                    <p class="mt-1 text-xs text-red-500 italic">{{ $message }}</p>
+                    <p class="mt-2 text-xs text-red-500 font-semibold flex items-center gap-1 italic">
+                        <i class="fas fa-exclamation-circle text-[10px]"></i> {{ $message }}
+                    </p>
                 @enderror
             </div>
 
-            <div class="flex items-center justify-between pt-2">
-                <a href="/" class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition">Anuluj</a>
-                <a href="/register" class="text-sm font-semibold text-gray-600 hover:text-gray-900 transition">Rejestracja</a>
-                <button type="submit" class="px-5 py-2 bg-indigo-600 text-white text-sm font-bold rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition shadow-md">
+            <!-- przyciski -->
+            <div class="flex items-center justify-between pt-4">
+                <a href="/register" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors underline-offset-4 hover:underline">
+                    Utwórz konto
+                </a>
+                <button type="submit" class="px-8 py-3 bg-blue-600 text-white text-sm font-bold rounded-2xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 transition-all shadow-lg shadow-blue-600/20 active:scale-95 cursor-pointer">
                     Zaloguj się
                 </button>
             </div>
         </form>
     </div>
-
-</body>
-</html>
+</x-layout>
