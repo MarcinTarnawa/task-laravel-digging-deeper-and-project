@@ -17,6 +17,10 @@ class Customer extends Model
         'consent_sent_at'
     ];
 
+    protected $casts = [
+        'consent_sent_at' => 'datetime',
+    ];
+
     public function customerData()
     {
         return $this->hasMany(CustomerData::class);

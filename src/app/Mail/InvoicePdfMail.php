@@ -56,7 +56,7 @@ class InvoicePdfMail extends Mailable
     {
         if ($this->pdfData) {
             return [
-                Attachment::fromData(fn() => $this->pdfData, 'Faktura.pdf')
+                Attachment::fromData(fn() => $this->pdfData, 'Faktura ' . $this->invoice->id . '.pdf')
                     ->withMime('application/pdf'),
             ];
         }
